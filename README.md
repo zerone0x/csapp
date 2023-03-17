@@ -2,6 +2,7 @@
 lab and notes
 
 # resource
+- [17schedule](http://www.cs.cmu.edu/afs/cs/academic/class/15213-f17/www/schedule.html)
 - [Intro](https://csdiy.wiki/en/%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/CSAPP/)
 - [video](https://scs.hosted.panopto.com/Panopto/Pages/Sessions/List.aspx#folderID=%22b96d90ae-9871-4fae-91e2-b1627b43e25e%22)
 - [official lab](http://csapp.cs.cmu.edu/3e/labs.html)
@@ -30,16 +31,16 @@ Lab materials are from [student website](http://csapp.cs.cmu.edu/3e/labs.html)
 
 - [ ] Overview
   - [ ] reading 1
-  - [ ] video
+  - [x] video
 - [ ] Bits, Bytes, & Integers I
   - [ ] reading 2.1
-  - [ ] video
+  - [x] video
 - [ ] Bits, Bytes, & Integers II
   - [ ] reading 2.2-2.3
-  - [ ] video
+  - [x] video
 - [ ] Floating Point
   - [ ] reading 2.4
-  - [ ] video
+  - [x] video
 - [ ] Machine Prog: Basics
   - [ ] reading 3.1-3.5
   - [ ] video
