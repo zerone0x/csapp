@@ -11,6 +11,7 @@ lab and notes
 - [intro cs122](https://www.cs.cmu.edu/~15122/schedule.shtml)
 - [slide](http://csapp.cs.cmu.edu/3e/perspective.html) web format
 - [中文电子书](https://hansimov.gitbook.io/csapp/labs/attack-lab)
+- [solustion_ch](https://www.cnblogs.com/zhiyiYo/p/16242033.html)
 
 ### My progress for labs of CS:APP3e
 
