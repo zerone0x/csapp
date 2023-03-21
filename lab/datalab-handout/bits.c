@@ -246,7 +246,22 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+  int howManyBits(int x) {
+  int sign = x >> 31;
+  int x = (~x & sign) | (x & ~sign);
+  int bit16 = (!!(x>>16) ) << 4;
+  x = x >> bit16;
+  int bit8 = (!!(x>>8) ) << 3;
+  x = x >> bit8;
+  int bit4 = (!!(x>>4) ) << 2;
+  x = x >> bit4;
+  int bit2 = (!!(x>>2) ) << 1;
+  x = x >> bit2;
+  int bit1 = !!(x>>1);
+  x = x >> bit1;
+
+  return bit16+bit8+bit4+bit2+bit1+x+1;
+}
 }
 //float
 /* 
@@ -261,7 +276,13 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  return 2;
+  unsigned int newExp = ((uf >> 23) + 1) << 23;
+if (newExp == 0xFF000000) {  // 指数为255，表示溢出
+  return uf & 0x80000000 | 0xFF << 23;
+} else {
+  return (uf & 0x807fffff) | newExp;
+}
+  return ;
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
