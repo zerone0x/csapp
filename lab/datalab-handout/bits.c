@@ -130,8 +130,8 @@ NOTES:
  *      to the coding rules.
  *   2. Use the BDD checker to formally verify that your solutions produce 
  *      the correct answers.
- */
 
+ */
 
 #endif
 //1
@@ -143,7 +143,8 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return x ^ y;
+  return ~(~x & ~y) & ~(x & y);
+
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -152,9 +153,7 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int tmin(void) {
-
-  return 2;
-
+  return (1) << 31;
 }
 //2
 /*
@@ -165,7 +164,8 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return 2;
+  return !(~(x+1+x) +!(x+1));
+ 
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -176,7 +176,9 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+  int mask = 0xAAAAAAAA;
+  // mask = (mask << 16) | mask;
+  return !((x & mask) ^mask);
 }
 /* 
  * negate - return -x 
@@ -186,7 +188,7 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x +1;
 }
 //3
 /* 
@@ -199,7 +201,15 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int sign = 0x1 << 31;
+  int upperbowned = ~(sign | 0x39);
+  int lowerbowned = ~0x30;
+  int u = sign & ((upperbowned + x) >> 31);
+  int l = sign & ((lowerbowned + 1 + x) >> 31);
+  return !(u | l);
+  // return (!((x >> 3) ^ 6)) | (!((x >> 1) ^ 28));
+
+
 }
 /* 
  * conditional - same as x ? y : z 
@@ -209,7 +219,8 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  int gx = ~(!(x ^ 0)) + 1;
+  return (gx & z) + (~gx & y);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -219,7 +230,12 @@ int conditional(int x, int y, int z) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+  int sign_x = (x >> 31) & 1;
+  int sign_y = (y >> 31) & 1;
+  int z = x + (~y + 1);
+  int isLess = !((z & (1 << 31)) ^ (1 << 31)) | !(z^0);
+  return (!(~sign_x & sign_y)) &((sign_x & ~sign_y) | isLess);
+  // return !((y + ~x + 1) & 0x80000000);
 }
 //4
 /* 
@@ -231,7 +247,8 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4 
  */
 int logicalNeg(int x) {
-  return 2;
+
+  return ((x|(~x+1))>>31)+1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -246,9 +263,8 @@ int logicalNeg(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  int howManyBits(int x) {
   int sign = x >> 31;
-  int x = (~x & sign) | (x & ~sign);
+  x = (~x & sign) | (x & ~sign);
   int bit16 = (!!(x>>16) ) << 4;
   x = x >> bit16;
   int bit8 = (!!(x>>8) ) << 3;
@@ -261,7 +277,7 @@ int howManyBits(int x) {
   x = x >> bit1;
 
   return bit16+bit8+bit4+bit2+bit1+x+1;
-}
+
 }
 //float
 /* 
@@ -276,14 +292,21 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 unsigned floatScale2(unsigned uf) {
-  unsigned int newExp = ((uf >> 23) + 1) << 23;
-if (newExp == 0xFF000000) {  // 指数为255，表示溢出
-  return uf & 0x80000000 | 0xFF << 23;
-} else {
-  return (uf & 0x807fffff) | newExp;
-}
-  return ;
-}
+  unsigned exp = (uf & 0x7f800000) >> 23;
+  if (exp == 255){
+    return uf;
+  }
+  unsigned sign = uf & 0x80000000;
+  if (exp == 0){
+    return uf << 1 | sign;
+  }
+  if (++exp == 255){
+    return sign | 0x7f800000;
+
+    }
+    return exp << 23 | (uf & 0x807fffff);
+  }
+
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
  *   for floating point argument f.
@@ -297,7 +320,39 @@ if (newExp == 0xFF000000) {  // 指数为255，表示溢出
  *   Rating: 4
  */
 int floatFloat2Int(unsigned uf) {
-  return 2;
+  unsigned exp = (uf & 0x7f800000) >> 23;
+  int e = exp - 127;
+  
+  // 0 或者 < 1
+  if (e < 0) {
+        return 0;
+    }
+  // 浮点数里能表示的最大的指数是 2^9-1-127=128
+  // 但int最大是31
+  if (e>31){
+    return 0x80000000;
+  }
+  // f presents 1111
+  // & 1 points to 本身
+  // uf & 0x007fffff 拿到frac的所有位
+  // | 0x00800000 exp设为1？
+  int frac = (uf & 0x007fffff) | 0x00800000;
+  // 小于23就移动小数点，大于就添加0
+  if (e > 23){
+    frac <<= (e - 23);
+  }else{
+    frac >>= (23 - e);
+  }
+  // 如果frac的符号为改变，则返回相反数
+  if ((uf >> 31) ^ (frac >> 31)) {
+       return ~frac + 1;
+    }
+    if (frac >> 31) {
+      //  最小负整数是最大正数0x7fffffff+1
+        return 0x80000000;
+    }
+   
+  return frac;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -313,5 +368,13 @@ int floatFloat2Int(unsigned uf) {
  *   Rating: 4
  */
 unsigned floatPower2(int x) {
-    return 2;
+  unsigned exp = 127 + x;
+    if (exp >= 255) {
+        return 0x7f800000u;
+    }
+
+    if (exp < 0) {
+        return 0;
+    }
+    return exp << 23;
 }

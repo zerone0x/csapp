@@ -13,6 +13,10 @@ lab and notes
 - [中文电子书](https://hansimov.gitbook.io/csapp/labs/attack-lab)
 - [solustion_ch](https://www.cnblogs.com/zhiyiYo/p/16242033.html)
 
+
+# tool
+- [二进制转换](https://tool.oschina.net/hexconvert)
+
 ### My progress for labs of CS:APP3e
 
 - [ ] Lab0: c programming lab 
